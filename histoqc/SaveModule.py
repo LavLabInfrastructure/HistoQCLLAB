@@ -44,7 +44,7 @@ def saveThumbnails(s, params):
     
     # use thumb & mask_use to calculate what percentage of tissue is left
     mask = s["img_mask_use"]
-    s.addToPrintList("pixel_to_use_percent", str(len(mask.nonzero()[0])/img.nonzero()[0]))
+    s.addToPrintList("pixel_to_use_percent", str(len(mask.nonzero()[0])/len(img.nonzero()[0])))
 
     img = s.getImgThumb(params.get("small_dim", 500))
     io.imsave(s["outdir"] + os.sep + s["filename"] + "_thumb_small.png", img)
