@@ -7,27 +7,13 @@
 
 FROM python:3.8 AS builder
 ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /opt/HistoQC
-COPY . .
-# Create virtual environment for this project. This makes it easier to copy the Python
-# installation into the second stage of the build.
-ENV PATH="/opt/HistoQC/venv/bin:$PATH"
-RUN python -m venv venv \
-    && python -m pip install --no-cache-dir setuptools wheel \
-    && python -m pip install --no-cache-dir -r requirements.txt \
-    && python -m pip install --no-cache-dir . \
-    && pip install omero-py \
-    # We force this so there is no error even if the dll does not exist.
-    && rm -f libopenslide-0.dll
 
-FROM python:3.8-slim
-ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /opt/HistoQC
-COPY --from=builder /opt/HistoQC/ .
-ENV PATH="/opt/HistoQC/venv/bin:$PATH"
+# download build items
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y \
         git \
+        unzip \
+        curl \
         autotools-dev \
         autoconf \
         automake \
@@ -47,8 +33,67 @@ RUN apt-get update \
         libxml2-dev \
         pkg-config \
         libtk8.6 \
-    && rm -rf /var/lib/apt/lists/* && \
-    cd /tmp && git clone https://github.com/barrettMCW/openslideLLAB.git && \
+    && rm -rf /var/lib/apt/lists/*  
+
+# dumb init for process management
+RUN mkdir /scripts && curl -L -o /scripts/dumb-init \
+    https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64 && \
+    chmod +x /scripts/dumb-init
+
+# glencoe bioformats converters
+RUN cd / && curl -L -o bf2raw.zip https://github.com/glencoesoftware/bioformats2raw/releases/download/v0.5.0rc2/bioformats2raw-0.5.0-rc2.zip && \
+    curl -L -o raw2ometiff.zip https://github.com/glencoesoftware/raw2ometiff/releases/download/v0.3.1rc1/raw2ometiff-0.3.1-rc1.zip && \
+    unzip -qod /scripts "bf2raw.zip" && \
+     unzip -qod /scripts "raw2ometiff.zip" && rm *.zip
+
+# compile an openslide library with huron drivers
+RUN cd /tmp && git clone https://github.com/barrettMCW/openslideLLAB.git && \
     cd openslideLLAB && autoreconf -i && \
     ./configure && make && make install
+
+# copy our local hqc files over
+WORKDIR /opt/HistoQC
+COPY . .
+RUN mv scripts/* /scripts
+
+# Create virtual environment for this project. This makes it easier to copy the Python
+# installation into the second stage of the build.
+ENV PATH="/opt/HistoQC/venv/bin:$PATH"
+RUN python -m venv venv \
+    && python -m pip install --no-cache-dir setuptools wheel \
+    && python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip install --no-cache-dir . \
+    # We force this so there is no error even if the dll does not exist.
+    && rm -f libopenslide-0.dll 
+
+#
+## SLIMMIN TIME
+#
+FROM python:3.8-slim
+LABEL name="mjbarrett/hqcPipe"
+ARG DEBIAN_FRONTEND=noninteractive
+
+#install default runtime libraries
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends\
+    default-jre-headless \
+    libopenslide0 \
+    libblosc1 \
+    zip \
+    inotify-tools && \
+    rm -rf /var/lib/apt/lists/*
+
+#install openslide
+COPY --from=builder /usr/local/lib/libopenslide* /usr/local/lib/
 ENV LD_LIBRARY_PATH="/usr/local/lib/"
+
+# get our hqc back
+WORKDIR /opt/HistoQC
+COPY --from=builder /opt/HistoQC/ .
+ENV PATH="/opt/HistoQC/venv/bin:$PATH"
+
+# get our scripts back 
+COPY --from=builder /scripts/* /docker/
+
+# bash pipeline constructor
+ENTRYPOINT [ "/docker/entrypoint.sh" ]
