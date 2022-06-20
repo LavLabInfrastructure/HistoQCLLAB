@@ -1,7 +1,7 @@
 #!/bin/bash
 #Called when WSI fails screen
 #sends emails to specified addresses and moves tiff to FAIL_DIR
-echo "REPORTING"
+/scripts/log.sh WARN "REPORTING"
 ###FUNCTIONS
 #sends email to defined addresses
 sendEmails() {
@@ -14,7 +14,7 @@ sendEmails() {
 
 ###MAIN
 #if FAIL_DIR has not been bound, make a directory in IN_DIR
-[[ ! -d $FAIL_DIR ]] && FAIL_DIR="/in/failed" && mkdir $FAIL_DIR
+[[ ! -d $FAIL_DIR ]] && FAIL_DIR="/in/failed" && mkdir -p $FAIL_DIR
 
 #move file to faildir
 mv $1 $FAIL_DIR/${1##*/}

@@ -17,10 +17,10 @@ getValue() {
 }
 ##MAIN
 #print use template if no args supplied
-[[ -z $* ]] && echo "getHQCStat.sh {filename} {hqc value name} {hqc results.tsv file}"
+[[ -z $* ]] && /scripts/log.sh ERROR "getHQCStat was called without args. follow this format" "getHQCStat.sh {filename} {hqc value name} {hqc results.tsv file}" && exit 1
 # input validation
-[[ $1 != *.tif ]] && echo "getHQCStat was expecting to know which slide you wanted data from" && exit 1 
-[[ -z $2 ]] && echo "get HQCStat was expecting a key to find a value" && exit 1
-([[ ! -e $3 ]] || [[ $3 != */results.tsv ]]) && echo "getHQCStat was expecting a 'results.tsv' file, something went wrong" && exit 1
+[[ $1 != *.tif ]] && /scripts/log.sh ERROR "getHQCStat was expecting to know which slide you wanted data from" && exit 1 
+[[ -z $2 ]] && /scripts/log.sh ERROR "get HQCStat was expecting a key to find a value" && exit 1
+([[ ! -e $3 ]] || [[ $3 != */results.tsv ]]) && /scripts/log.sh ERROR "getHQCStat was expecting a 'results.tsv' file, something went wrong" && exit 1
 #"return" hqc value
 echo $(getValue $1 $2 $3)
