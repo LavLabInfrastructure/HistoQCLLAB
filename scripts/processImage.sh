@@ -9,7 +9,7 @@ parentPath=${1%/*}
 dataset=${parentPath##*/}
 
 #mv to tmp directory (to avoid multiple calls on same file) 
-mv $1 /tmp/PROCESSING
+mkdir -p /tmp/PROCESSING && mv $1 /tmp/PROCESSING
 currentImg=/tmp/PROCESSING/$filename
 echo $currentImg
 

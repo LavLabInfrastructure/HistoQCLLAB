@@ -4,7 +4,7 @@
 echo "WATCHING"
 inotifywait -mr $IN_DIR/$1 -e close_write |
 	while read dir action file; do
-		[[ file == .* ]] && exit 0
+		[[ file == .DS_Store ]] && exit 0
 		#if [[ -f file ]]; then #TODO: accurate if statement
 			echo "$file in $dir was $action"
 			echo "${dir}${file} was TOTALLY sent to omero"
