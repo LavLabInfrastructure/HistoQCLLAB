@@ -4,7 +4,6 @@ def saveRemovalStats(s, params):
     logging.info(f"{s['filename']} - \tsaveRemovalStats")
     mask = s["img_mask_use"]
     tissue = s["img_mask_bright"]
-    #can't divide by nothing
     if tissue is None:
         logging.warning(
             f"{s['filename']} - ScoreModule.saveRemovalStats requires you to run tissue detection"

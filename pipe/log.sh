@@ -47,4 +47,5 @@ msgToLog() {
 # if INFO is selected, all non-errors get printed to STDOUT 
 [[ $LOG_LEVEL == INFO ]] && printMsg $@
 #if WARN is selected, INFO level logs don't use printMsg 
-[[ $LOG_LEVEL == WARN ]] && [[ $1 == WARN ]] && printMsg $@ || logMsg $@
+([[ $LOG_LEVEL == WARN ]] && [[ $1 == WARN ]] && printMsg $@) \
+    || logMsg $@

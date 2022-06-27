@@ -16,7 +16,7 @@ def getBasicStats(s, params):
     s.addToPrintList("width", osh.properties.get("openslide.level[0].width", "NA"))
     s.addToPrintList("mpp_x", osh.properties.get("openslide.mpp-x", "NA"))
     s.addToPrintList("mpp_y", osh.properties.get("openslide.mpp-y", "NA"))
-    s.addToPrintList("comment", osh.properties.get("openslide.comment", "NA").replace("\n", " ").replace("\r", " "))
+    #s.addToPrintList("comment", osh.properties.get("openslide.comment", "NA").replace("\n", " ").replace("\r", " "))
     return
 
 
