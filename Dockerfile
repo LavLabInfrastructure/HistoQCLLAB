@@ -54,7 +54,7 @@ RUN cd /tmp && git clone https://github.com/barrettMCW/openslideLLAB.git && \
 # copy our local hqc files over
 WORKDIR /opt/HistoQC
 COPY . .
-RUN mv pipe/* /docker/
+RUN mv pipe/* /docker
 
 # Create virtual environment for this project. This makes it easier to copy the Python
 # installation into the second stage of the build.
