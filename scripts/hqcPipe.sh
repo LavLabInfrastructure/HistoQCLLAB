@@ -3,7 +3,7 @@
 echo "HQCPIPE"
 #initial screen. Requires a valid pixel percentage 
 [[ $REQUIRED_PIXEL_PERCENT -gt 0 ]] && [[ $REQUIRED_PIXEL_PERCENT -lt 101 ]] && \
-    python -m histoqc --force -n 1 -o /tmp/$2/screen/ $1
+    python -m histoqc --force -o /tmp/$2/screen/ $1
 
 #determine if it passes (just using remaining tissue percentage)
 screenScore=$(/docker/getHQCStat.sh ${1##*/} remaining_tissue_percent /tmp/$2/screen/results.tsv)

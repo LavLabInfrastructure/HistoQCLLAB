@@ -9,7 +9,7 @@ parentPath=${1%/*}
 dataset=${parentPath##*/}
 
 #mv to tmp directory (to avoid multiple calls on same file) 
-mv $1 /tmp/PROCESSING
+mkdir -p /tmp/PROCESSING/ && mv $1 /tmp/PROCESSING
 currentImg=/tmp/PROCESSING/$filename
 echo $currentImg
 
@@ -34,14 +34,14 @@ tiffcomment $currentImg | sed s/"Resolution = 0.20 um"/"Resolution = 0.20 um\nAp
 # fi
 
 #convert to zarr
-[[ $CONVERT_TO_ZARR ]] && echo "converting to zarr" && mkdir "/out/$2/$dataset/$filename/" && \
-        /docker/bin/bioformats2raw "$1" "/out/$2/$dataset/$filename/" $BF2RAW_ARGS && echo "converted to raw" 
+[[ $CONVERT_TO_ZARR ]] && echo "converting to zarr" && \
+        /docker/bin/bioformats2raw "$currentImg" "/out/$2/$dataset/$filename/" $BF2RAW_ARGS && echo "converted to raw" 
 
 #convert to ome.tiff
 [[ $CONVERT_TO_TIFF ]] && echo "converting to ome.tiff" && \
-    /docker/bin/bioformats2raw --debug=WARN "$currentImg" "/tmp/$filename/" $BF2RAW_ARGS && \
+    /docker/bin/bioformats2raw -p --log-level WARN "$currentImg" "/tmp/$filename/" $BF2RAW_ARGS && \
     mkdir -p "/out/$2/$dataset/" && echo "converted to raw" && \
-    /docker/bin/raw2ometiff --debug=WARN "/tmp/$filename/" "/out/$2/$dataset/${filename%.tif}.ome.tiff" $RAW2TIFF_ARGS && \
+    /docker/bin/raw2ometiff -p --log-level WARN "/tmp/$filename/" "/out/$2/$dataset/${filename%.tif}.ome.tiff" $RAW2TIFF_ARGS && \
     echo "converted to ome.tiff"
 
 
