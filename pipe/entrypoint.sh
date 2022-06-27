@@ -8,7 +8,7 @@ set -e
 mkdir -p $LOG_DIR
 
 # just export WSI file extensions instead of pasting that garbage everytime
-export WSI_EXTENSIONS=.*\.tif$|.*\.tiff$|.*\.svs$|.*\.jpg$|.*\.vsi$
+export WSI_EXTENSIONS=".*\.tif$|.*\.tiff$|.*\.svs$|.*\.jpg$|.*\.vsi$"
 
 # watch each subdirectory of /in
 cd /in
