@@ -19,7 +19,7 @@ currentImg=/tmp/PROCESSING/$filename
 [[ $? != 0 ]] && /docker/log.sh ERROR "$2: failed with code $?" && exit 1
 
 #convert to zarr
-[[ $CONVERT_TO_ZARR ]] && /docker/log.sh INFO "converting to zarr" #&& mkdir -p "/out/$2/$dataset/$filename/" && \
+[[ $CONVERT_TO_ZARR ]] && /docker/log.sh INFO "converting to zarr" && \
         /docker/bin/bioformats2raw "$currentImg" "/out/$2/$dataset/${filename%.*}/" $BF2RAW_ARGS && \
         /docker/log.sh INFO "converted to zarr" 
 
