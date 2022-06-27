@@ -70,17 +70,18 @@ RUN python -m venv venv \
 ## SLIMMIN TIME
 #
 FROM python:3.8-slim
-LABEL name="mjbarrett/hqcPipe"
 ARG DEBIAN_FRONTEND=noninteractive
 
-#install default runtime libraries
+#install unmodified runtime libraries
 RUN apt-get update \
     && apt-get install -y --no-install-recommends\
     default-jre-headless \
     libopenslide0 \
     libblosc1 \
     zip \
-    inotify-tools && \
+    inotify-tools \
+    ssmtp \
+    mailutils && \
     rm -rf /var/lib/apt/lists/*
 
 #install openslide

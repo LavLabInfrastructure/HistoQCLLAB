@@ -1,13 +1,14 @@
 #!/bin/bash
 # watches a directory from /in for files added while server is up and uses that as context for histoqc processing
 # ex. watchDir brain ; will watch /in/brain for files then pass "brain" to processImage for the correct pipeline 
-echo "WATCHING"
-inotifywait -mr $IN_DIR/$1 -e close_write |
+/docker/log.sh INFO "WATCHING DIRECTORIES"
+cd /in
+inotifywait -mr $1 -e close_write |
 	while read dir action file; do
-		[[ file == .* ]] && exit 0
-		#if [[ -f file ]]; then #TODO: accurate if statement
-			echo "$file in $dir was $action"
-			echo "${dir}${file} was TOTALLY sent to omero"
+		if [[ "$file" =~ $WSI_EXTENSIONS ]]; then 
+			/docker/log.sh INFO "file: $file in: $dir was: $action"
 			/docker/processImage.sh "${dir}${file}" $1 && wait
-		#fi
+		else
+			/docker/log.sh WARN "$dir$file was ignored"
+		fi
 	done
