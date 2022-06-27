@@ -94,7 +94,7 @@ COPY --from=builder /opt/HistoQC/ .
 ENV PATH="/opt/HistoQC/venv/bin:$PATH"
 
 # get our scripts back 
-COPY --from=builder /pipe/* /docker/
+COPY --from=builder /pipe/* /docker
 
 # bash pipeline constructor
 ENTRYPOINT [ "/docker/entrypoint.sh" ]
