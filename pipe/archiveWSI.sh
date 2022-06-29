@@ -10,12 +10,9 @@ transferArchive() {
 
 # tries to guess when you're done importing files, then zips it up
 tarballArchive() {
-    /docker/log.sh INFO "Tarballing ${1%##/}"
-    # define archive if needed
-    [[ -z $ARCHIVE_DIR ]] && ARCHIVE_DIR = "/out/archive"
-
-    # define tar file for easy readin
-    local tarFile=$ARCHIVE_DIR/${3##*/}.tar
+    /docker/log.sh INFO "Tarballing $2:${1%##/}"
+    # define tar file for easy reading
+    local tarFile=$ARCHIVE_DIR/$2/${3##*/}.tar
 
     # if an archive is started, append to it
     [[ -f $tarFile ]] && tar -rf $tarFile $1|| \
@@ -37,8 +34,8 @@ zipArchive() {
 ##MAIN
 /docker/log.sh INFO "ARCHIVE"
 # define archive if it hasn't been
-[[ -z $ARCHIVE_DIR ]] && ARCHIVE_DIR = "/out/archive" && /docker/log.sh \
-    WARN "Archive_Dir is not set, Using /out/archive"
+[[ -z $ARCHIVE_DIR ]] && ARCHIVE_DIR="/out/archive" && /docker/log.sh \
+    WARN "ARCHIVE_DIR is not set, Using /out/archive"
 
 # if ARCHIVE_ADDRESS is defined let them know it's not a feature
 ([[ $ARCHIVE_ADDRESS ]] && transferArchive) ||
