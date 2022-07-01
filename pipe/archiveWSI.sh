@@ -13,6 +13,7 @@ tarballArchive() {
     /docker/log.sh INFO "Tarballing $2:${1%##/}"
     # define tar file for easy reading
     local tarFile=$ARCHIVE_DIR/$2/${3##*/}.tar
+     [[ ! -d $ARCHIVE_DIR/$2 ]] && mkdir -p $ARCHIVE_DIR/$2
 
     # if an archive is started, append to it
     [[ -f $tarFile ]] && tar -rf $tarFile $1|| \
@@ -20,7 +21,7 @@ tarballArchive() {
     tar -cf $tarFile $1
 
     # if dataset directory is empty, gzip the archive and delete the directory
-    [[ ! -f $3/* ]] && rmdir $3 && 7z a $tarFile.gz $tarFile && rm $tarFile
+    [[ -z "$(ls -A $3)" ]] && rmdir $3 && 7z a $tarFile.gz $tarFile && rm $tarFile
 }
 
 # just makes a zip, and adds to it
@@ -38,10 +39,10 @@ zipArchive() {
     WARN "ARCHIVE_DIR is not set, Using /out/archive"
 
 # if ARCHIVE_ADDRESS is defined let them know it's not a feature
-([[ $ARCHIVE_ADDRESS ]] && transferArchive) ||
 # if tarball, settle in. it'll take a while
-([[ $TARBALL ]] && tarballArchive $1 $2 $3) ||
 # else zip 
+([[ $ARCHIVE_ADDRESS ]] && transferArchive) ||
+([[ $TARBALL ]] && tarballArchive $1 $2 $3) ||
 zipArchive $1 $2
 
 # Good Job!
