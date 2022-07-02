@@ -12,7 +12,8 @@ dataset=${parentPath##*/}
 mkdir -p /tmp/PROCESSING && mv $1 /tmp/PROCESSING
 currentImg=/tmp/PROCESSING/$filename
 
-#runs HQC as ordered
+# if it's in the override pipe, don't run hqc
+[[ $2 =~ override|OVERRIDE ]] || \
 /docker/hqcPipe.sh $currentImg ${2%/} 
 
 #hqc will throw an error code if bad happened
