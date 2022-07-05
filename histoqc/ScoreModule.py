@@ -8,10 +8,10 @@ def saveRemovalStats(s, params):
         logging.warning(
             f"{s['filename']} - ScoreModule.saveRemovalStats requires you to run tissue detection"
         )
-    #acceptable pixels divided by tissue pixels
+    # acceptable pixels divided by tissue pixels
     tissueRemaining = str(
         len(mask.nonzero()[0])/
-        len((tissue == 0).nonzero()[0])
+        len(nonzero(tissue == 0)[0])
     )
     s.addToPrintList("remaining_tissue_percent", tissueRemaining)
     return
