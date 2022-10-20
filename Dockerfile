@@ -44,7 +44,7 @@ RUN mkdir /pipe && curl -L -o /pipe/dumb-init \
 RUN cd / && curl -L -o bf2raw.zip https://github.com/glencoesoftware/bioformats2raw/releases/download/v0.5.0rc2/bioformats2raw-0.5.0-rc2.zip && \
     curl -L -o raw2ometiff.zip https://github.com/glencoesoftware/raw2ometiff/releases/download/v0.3.1rc1/raw2ometiff-0.3.1-rc1.zip && \
     unzip -qod /pipe "bf2raw.zip" && \
-     unzip -qod /pipe "raw2ometiff.zip" && rm *.zip
+    unzip -qod /pipe "raw2ometiff.zip" && rm *.zip
 
 # compile an openslide library with huron drivers
 RUN cd /tmp && git clone https://github.com/barrettMCW/openslideLLAB.git && \
@@ -52,15 +52,15 @@ RUN cd /tmp && git clone https://github.com/barrettMCW/openslideLLAB.git && \
     ./configure && make && make install
 
 # copy our local hqc files over
-WORKDIR /opt/HistoQC
-COPY . .
-RUN mv pipe/* /pipe
+ADD HistoQC /opt/HistoQC
+ADD pipe /pipe
 
 # Create virtual environment for this project. This makes it easier to copy the Python
 # installation into the second stage of the build.
 ENV PATH="/opt/HistoQC/venv/bin:$PATH"
+WORKDIR /opt/HistoQC
 RUN python -m venv venv \
-    && python -m pip install --no-cache-dir setuptools wheel \
+    && python -m pip install --no-cache-dir wheel \
     && python -m pip install --no-cache-dir -r requirements.txt \
     && python -m pip install --no-cache-dir . \
     # We force this so there is no error even if the dll does not exist.
