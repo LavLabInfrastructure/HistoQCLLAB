@@ -1,4 +1,4 @@
-#!/pipe/dumb-init /bin/bash
+#!/docker/dumb-init /bin/bash
 # starts watching each directory of /in/ 
 set -e
 # if logdir is not defined, define it
